@@ -1,0 +1,17 @@
+node_modules
+**/.env
+src/lib/firebase.ts
+
+
+# Ignore firebase configuration files
+src/lib/firebase.ts
+
+# Ignore script files containing API keys
+src/scripts/add-notification.html
+src/scripts/add-test-notification.js
+src/scripts/get-user-id.html
+
+# Ignore node_modules (already recommended)
+node_modules/
+
+dist/assets
