@@ -1,10 +1,5 @@
 node_modules
 **/.env
-src/lib/firebase.ts
-
-
-# Ignore firebase configuration files
-src/lib/firebase.ts
 
 # Ignore script files containing API keys
 src/scripts/add-notification.html
