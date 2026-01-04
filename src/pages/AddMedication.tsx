@@ -290,7 +290,7 @@ const AddMedication = () => {
         });
       } else {
         // Add new medication using the service
-        success = await addMedication({
+        console.log('Calling addMedication with:', {
           name: values.name,
           dosage: values.dosage,
           frequency: values.frequency,
@@ -301,8 +301,26 @@ const AddMedication = () => {
           stock: values.stock || 0
         });
         
-        if (!success) {
-          throw new Error('Failed to add medication');
+        try {
+          success = await addMedication({
+            name: values.name,
+            dosage: values.dosage,
+            frequency: values.frequency,
+            timeOfDay: values.time,
+            startDate: values.startDate,
+            endDate: values.endDate,
+            notes: values.instructions,
+            stock: values.stock || 0
+          });
+          
+          if (!success) {
+            throw new Error('Failed to add medication - service returned false');
+          }
+          
+          console.log('Medication added successfully via service');
+        } catch (serviceError) {
+          console.error('Error from addMedication service:', serviceError);
+          throw serviceError;
         }
         
         // Add the medication to the user profile
@@ -320,6 +338,8 @@ const AddMedication = () => {
           
           console.log("Added new medication to Firebase:", firebaseMedication);
           console.log("Updated medications in Firebase:", updatedMedications);
+        } else {
+          console.warn('User profile or updateUserProfile not available');
         }
         
         toast({

@@ -1,0 +1,13 @@
+# Allow all web crawlers
+User-agent: *
+Allow: /
+
+# Disallow crawling of authentication pages
+Disallow: /dashboard
+Disallow: /medication-tracker
+Disallow: /notifications
+Disallow: /add-medication
+Disallow: /profile
+
+# Sitemap location
+Sitemap: https://medx-app.com/sitemap.xml 

@@ -169,32 +169,64 @@ export const syncMedications = async (medications: any[]) => {
 // Add a new medication
 export const addMedication = async (medication: any) => {
   try {
+    console.log('addMedication called with:', medication);
+    
     const userId = getCurrentUserId();
     if (!userId) {
-      console.error('No user is currently logged in');
-      return false;
+      const error = 'No user is currently logged in';
+      console.error(error);
+      console.error('Auth state:', auth.currentUser);
+      throw new Error(error);
     }
+    
+    console.log('User ID:', userId);
     
     const normalizedMedication = normalizeMedication(medication);
     if (!normalizedMedication) {
-      console.error('Invalid medication data');
-      return false;
+      const error = 'Invalid medication data';
+      console.error(error, medication);
+      throw new Error(error);
     }
     
+    console.log('Normalized medication:', normalizedMedication);
+    
     const userDocRef = doc(db, 'users', userId);
+    console.log('Fetching user document...');
     const userDoc = await getDoc(userDocRef);
+    
+    console.log('User document exists:', userDoc.exists());
     
     if (!userDoc.exists()) {
       // Create the user document with the medication
+      console.log('Creating new user document with medication...');
       await setDoc(userDocRef, {
-        medications: [normalizedMedication]
-      });
+        uid: userId,
+        email: auth.currentUser?.email || '',
+        fullName: auth.currentUser?.displayName || 'User',
+        userType: 'patient',
+        medications: [normalizedMedication],
+        createdAt: new Date(),
+        updatedAt: new Date()
+      }, { merge: true });
+      console.log('User document created successfully');
     } else {
       // Add the medication to the existing array
+      console.log('Updating existing user document...');
+      const userData = userDoc.data();
+      const currentMedications = userData.medications || [];
+      console.log('Current medications count:', currentMedications.length);
+      
       await updateDoc(userDocRef, {
-        medications: arrayUnion(normalizedMedication)
+        medications: [...currentMedications, normalizedMedication],
+        updatedAt: new Date()
       });
+      console.log('Medication added successfully');
     }
+    
+    // Verify the save
+    const verifyDoc = await getDoc(userDocRef);
+    const verifyData = verifyDoc.data();
+    console.log('Verification - Total medications after save:', verifyData?.medications?.length || 0);
     
     // Notify dear ones about the new medication
     try {
@@ -205,9 +237,21 @@ export const addMedication = async (medication: any) => {
     }
     
     return true;
-  } catch (error) {
+  } catch (error: any) {
     console.error('Error adding medication:', error);
-    return false;
+    console.error('Error details:', {
+      code: error?.code,
+      message: error?.message,
+      stack: error?.stack
+    });
+    
+    // Check for specific Firebase errors
+    if (error?.code === 'permission-denied') {
+      console.error('PERMISSION DENIED: Your Firestore security rules may not allow this operation.');
+      console.error('Please check your Firebase console > Firestore Database > Rules');
+    }
+    
+    throw error;
   }
 };
 

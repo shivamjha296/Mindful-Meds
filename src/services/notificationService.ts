@@ -35,8 +35,7 @@ export const getNotificationPermission = (): string => {
 export const sendBrowserNotification = (title: string, options: NotificationOptions = {}): boolean => {
   if (!isNotificationSupported() || Notification.permission !== 'granted') {
     // Fall back to toast notification if browser notifications aren't available
-    toast({
-      title,
+    toast(title, {
       description: options.body || '',
       duration: 10000,
     });
@@ -83,36 +82,48 @@ export const sendMedicationTakenNotification = (medication: Medication, preferen
   const title = `Medication Taken: ${medication.name}`;
   const body = `You've successfully taken your ${medication.dosage || 'prescribed'} dose of ${medication.name}.`;
   
-  // Send browser notification
-  sendBrowserNotification(title, {
-    body,
-    icon: '/favicon.ico',
-    badge: '/favicon.ico',
-    data: {
-      medicationId: medication.id,
-      url: '/dashboard',
-    },
-    // Use a different notification sound if available
-    silent: false,
-  });
+  // Wrap in try-catch to prevent errors from breaking the app
+  try {
+    // Send browser notification
+    sendBrowserNotification(title, {
+      body,
+      icon: '/favicon.ico',
+      badge: '/favicon.ico',
+      data: {
+        medicationId: medication.id,
+        url: '/dashboard',
+      },
+      // Use a different notification sound if available
+      silent: false,
+    });
+  } catch (error) {
+    console.error('Error sending browser notification:', error);
+  }
   
-  // Also show a toast notification
-  toast.success(title, {
-    description: body,
-    duration: 5000,
-  });
+  // Show a simple toast notification (sonner format) - wrapped in try-catch
+  try {
+    toast.success(`${medication.name} marked as taken`, {
+      duration: 3000,
+    });
+  } catch (error) {
+    console.error('Error showing toast:', error);
+  }
   
-  // Store notification in local storage for recent notifications
-  storeLocalNotification({
-    id: `taken-${medication.id}-${Date.now()}`,
-    title,
-    message: body,
-    time: new Date().toLocaleTimeString(),
-    date: new Date().toLocaleDateString(),
-    isRead: false,
-    type: 'info',
-    timestamp: Date.now()
-  });
+  // Store notification in local storage - wrapped in try-catch
+  try {
+    storeLocalNotification({
+      id: `taken-${medication.id}-${Date.now()}`,
+      title,
+      message: body,
+      time: new Date().toLocaleTimeString(),
+      date: new Date().toLocaleDateString(),
+      isRead: false,
+      type: 'info',
+      timestamp: Date.now()
+    });
+  } catch (error) {
+    console.error('Error storing notification:', error);
+  }
 };
 
 // Store notification in local storage

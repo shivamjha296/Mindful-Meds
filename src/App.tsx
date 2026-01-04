@@ -12,7 +12,6 @@ import DearOnesPortal from './pages/DearOnesPortal';
 import Navbar from './components/Navbar';
 import { Toaster } from './components/ui/sonner';
 import ProtectedRoute from './components/ProtectedRoute';
-import TestStockDisplay from './components/TestStockDisplay';
 
 function App() {
   return (
@@ -24,7 +23,6 @@ function App() {
           
           {/* Dear Ones Portal - accessible to both patients and dear ones */}
           <Route path="/dear-ones-portal" element={<DearOnesPortal />} />
-          <Route path="/test-stock" element={<TestStockDisplay />} />
           
           {/* Patient-only Routes */}
           <Route element={<ProtectedRoute patientOnly={true} />}>

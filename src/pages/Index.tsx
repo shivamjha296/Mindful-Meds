@@ -16,15 +16,15 @@ const Index = () => {
           <div className="container mx-auto px-4 md:px-6 max-w-7xl">
             <div className="grid gap-8 lg:grid-cols-[1fr_500px] lg:gap-12 xl:grid-cols-[1fr_600px]">
               <div className="flex flex-col justify-center space-y-6">
-                <div className="space-y-4">
+                <div className="space-y-4 text-center">
                   <h1 className="text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl text-blue-800">
                     Your Medication Assistant
                   </h1>
-                  <p className="text-lg md:text-xl text-slate-700 max-w-[600px]">
+                  <p className="text-lg md:text-xl text-slate-700 max-w-[600px] mx-auto">
                     Keep track of your medications easily and never miss a dose again.
                   </p>
                 </div>
-                <div className="flex flex-col sm:flex-row gap-3 justify-center sm:justify-start">
+                <div className="flex flex-col sm:flex-row gap-3 justify-center">
                   <Link to="/auth">
                     <Button size="lg" className="w-full sm:w-auto bg-blue-600 hover:bg-blue-700 text-white shadow-md text-lg px-8 py-6">
                       Start Now
